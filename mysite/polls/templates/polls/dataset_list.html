@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Список наборов данных</title>
+    <style>
+        table {
+            border-collapse: collapse; /* Убирает двойные границы */
+            width: 100%; /* Задает ширину таблицы */
+        }
+        th, td {
+            border: 1px solid black; /* Задает границы ячеек */
+            padding: 8px; /* Добавляет отступы внутри ячеек */
+            text-align: left; /* Выравнивание текста по левому краю */
+        }
+        th {
+            background-color: #f2f2f2; /* Задает цвет фона для заголовков */
+        }
+    </style>
+</head>
+<body>
+<h1>Список наборов данных</h1>
+<table>
+    <tr>
+        <th>Идентификатор</th>
+        <th>Наименование</th>
+        <th>Дата</th>
+        <th>Наименование поставщика</th>
+    </tr>
+    {% for dataset in datasets %}
+    <tr>
+        <td>{{ dataset.identifier }}</td>
+        <td>{{ dataset.name }}</td>
+        <td>{{ dataset.date }}</td>
+        <td>{{ dataset.supplier_name }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>
