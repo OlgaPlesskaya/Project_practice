@@ -32,10 +32,33 @@
         <td>{{ dataset.identifier }}</td>
         <td>{{ dataset.name }}</td>
         <td>{{ dataset.date }}</td>
-        <td>{{ dataset.supplier_name }}</td>
+        <td>{{ dataset.supplier }}</td>
     </tr>
     {% endfor %}
 </table>
 
+<h1>Список сообщений</h1>
+<table>
+    <tr>
+        <th>Идентификатор</th>
+        <th>Текст сообщения</th>
+        <th>Тип источника</th>
+        <th>Принадлежность к
+            классификатору</th>
+    </tr>
+    {% for message in messages %}
+    <tr>
+        <td>{{ message.identifier }}</td>
+        <td>{{ message.text }}</td>
+        <td>{{ message.sourcetype }}</td>
+        <td>{% for category in message.categories.all %}
+            <li>{{ category.name }}</li>
+        {% empty %}
+            <li>Категорий нет</li>
+        {% endfor %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
 </body>
 </html>
