@@ -16,9 +16,32 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import path, include
+from rest_framework import routers, serializers, viewsets
+from polls.models import Dataset,Supplier,Message,CategoryLevel4
 
+# Serializers define the API representation.
+class DatasetSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Dataset
+        fields = 'identifier', 'name'
+          
+# ViewSets define the view behavior.
+class DatasetViewSet(viewsets.ModelViewSet):
+    queryset = Dataset.objects.all()
+    serializer_class = DatasetSerializer
+
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+router.register(r'datasets', DatasetViewSet)
+
+
+# Wire up our API using automatic URL routing.
+# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
+    path('', include(router.urls)),
     path("polls/", include("polls.urls")),
     path("admin/", admin.site.urls),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
