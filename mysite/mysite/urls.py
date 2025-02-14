@@ -18,23 +18,83 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers, serializers, viewsets
-from polls.models import Dataset,Supplier,Message,CategoryLevel4
+from polls.models import Dataset,Supplier,Message,CategoryLvl,Author,PublicationPlace
 
 # Serializers define the API representation.
-class DatasetSerializer(serializers.HyperlinkedModelSerializer):
+class DatasetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dataset
-        fields = 'identifier', 'name'
+        fields = '__all__'
           
 # ViewSets define the view behavior.
 class DatasetViewSet(viewsets.ModelViewSet):
     queryset = Dataset.objects.all()
     serializer_class = DatasetSerializer
 
+# ПоставщикSerializers define the API representation.
+class SupplierSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Supplier
+        fields = '__all__'
+          
+# ViewSets define the view behavior.
+class SupplierViewSet(viewsets.ModelViewSet):
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializer
+
+# Текстовое сообщение
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = '__all__'
+          
+# ViewSets define the view behavior.
+class MessageViewSet(viewsets.ModelViewSet):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+
+
+#Категории
+class CategoryLvlSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CategoryLvl
+        fields = '__all__'
+          
+# ViewSets define the view behavior.
+class CategoryLvlViewSet(viewsets.ModelViewSet):
+    queryset = CategoryLvl.objects.all()
+    serializer_class = CategoryLvlSerializer
+
+#Автор
+class AuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Author
+        fields = '__all__'
+          
+# ViewSets define the view behavior.
+class AuthorViewSet(viewsets.ModelViewSet):
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
+
+#Место публикации
+class PublicationPlaceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PublicationPlace
+        fields = '__all__'
+          
+# ViewSets define the view behavior.
+class PublicationPlaceViewSet(viewsets.ModelViewSet):
+    queryset = PublicationPlace.objects.all()
+    serializer_class = PublicationPlaceSerializer
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'datasets', DatasetViewSet)
+router.register(r'suppliers', SupplierViewSet)
+router.register(r'messages', MessageViewSet)
+router.register(r'categoryLvls', CategoryLvlViewSet)
+router.register(r'authors', AuthorViewSet)
+router.register(r'publicationplaces', PublicationPlaceViewSet)
 
 
 # Wire up our API using automatic URL routing.

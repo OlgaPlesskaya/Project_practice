@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Dataset,Supplier,Message,CategoryLevel4
+from .models import Dataset,Supplier,Message
 
 def dataset_list(request):
     datasets = Dataset.objects.all()

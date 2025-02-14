@@ -1,0 +1,10 @@
+    1  python app_plotly.app
+    2  python app_plotly.py
+    3  python app_plot.py
+    4  ps -ax
+    5  kill 64762
+    6  python app_plot.py
+    7  ps -ax
+    8  kill -9 64762
+    9  python app_plot.py
+   10  history >111

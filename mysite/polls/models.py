@@ -3,27 +3,51 @@ from django.core.validators import RegexValidator, EmailValidator, MaxLengthVali
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-class CategoryLevel1(models.Model):
-    name = models.CharField(max_length=50, default="Здравоохранение")
-
-class CategoryLevel2(models.Model):
-    name = models.CharField(max_length=50, choices=[
-        ("Здоровье человека", "Здоровье человека"),
-        ("Предоставление медицинской помощи", "Предоставление медицинской помощи"),
-    ])
-
-class CategoryLevel3(models.Model):
-    name = models.CharField(max_length=50, choices=[
-        ("инвалидность", "инвалидность"),
-        ("смертность", "смертность"),
-        ("лекарства", "лекарства"),
-        ("реабилитация", "реабилитация"),
-    ])
-
-class CategoryLevel4(models.Model):
+class CategoryLvl(models.Model):
+    identifier = models.AutoField(primary_key=True)  # Идентификатор
     name = models.CharField(max_length=100)
     def __str__(self):
         return f"Категория: {self.name}"
+
+class Author(models.Model):
+    identifier = models.AutoField(primary_key=True)  # Идентификатор
+    nickname = models.CharField(max_length=100, unique=True)
+    url = models.URLField(max_length=200, blank=True, null=True)
+    age = models.PositiveIntegerField()
+
+    # Тип автора (можно использовать выбор из предопределенных значений)
+    AUTHOR_TYPE_CHOICES = [
+        ('Личный профиль', 'Личный профиль'),
+        ('Сообщество', 'Сообщество')
+    ]
+    author_type = models.CharField(max_length=20, choices=AUTHOR_TYPE_CHOICES)
+    
+    # Пол автора
+    GENDER_CHOICES = [
+        ('Мужской', 'Мужской'),
+        ('Женский', 'Женский'),
+        ('Неизвестен', 'Неизвестен')
+    ]
+    gender = models.CharField(max_length=20, choices=GENDER_CHOICES)
+
+    def __str__(self):
+        return self.nickname
+
+def validate_url(value):
+    if not value.startswith(('http://', 'https://')):
+        raise ValidationError('Ссылка должна начинаться с "http://" или "https://".')
+
+class PublicationPlace(models.Model):
+    identifier = models.AutoField(primary_key=True)  # Идентификатор
+    name = models.CharField(max_length=255, unique=True)  # Наименование
+    url = models.URLField(max_length=2048, validators=[validate_url])  # Ссылка
+
+    def clean(self):
+        # Проверка на то, что наименование не пустое
+        if not self.name.strip():
+            raise ValidationError('Наименование не должно быть пустым и должно содержать хотя бы один символ.')
+    def __str__(self):
+        return self.name
 
 
 class Message(models.Model):
@@ -41,7 +65,10 @@ class Message(models.Model):
     )
     sourcetype = models.CharField(max_length=100, choices=SOURCE_T, blank=True)
     date = models.DateTimeField(auto_now_add=True)  # Дата публикации
-    categories = models.ManyToManyField(CategoryLevel4, help_text="Выберите классификацию/ии сообщения")  # Принадлежность классификатору
+    categories = models.ManyToManyField(CategoryLvl, help_text="Выберите классификацию/ии сообщения")  # Принадлежность классификатору
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)  # Автор
+    publication_place = models.ForeignKey(PublicationPlace, on_delete=models.CASCADE)  # Место публикации
+
     def __str__(self):
         return f"Идентификатор: {self.identifier}, Текст сообщения: {self.text}, Тип источника: {self.sourcetype} "
 
