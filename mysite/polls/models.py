@@ -107,6 +107,3 @@ class Dataset(models.Model):
         # Проверка, что дата не в будущем
         if self.date > timezone.now().date():
             raise ValidationError('Дата не может быть в будущем')
-
-
-
