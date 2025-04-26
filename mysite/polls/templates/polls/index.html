@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сервис предобработки текстовых сообщений</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'polls/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Сервис предобработки текстовых сообщений</h1>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="left-section">
+                <h2>Образование</h2>
+                <p>Информация о категориях:</p>
+                <input type="text" id="search" placeholder="Поиск по подкатегориям" onkeyup="filterSubcategories()">
+                <ul id="category-list">
+                    {% for category in categories %}
+                        <li>
+                            <span class="emoji">{{ category.emoji }}</span> {{ category.name }}
+                            <div class="subcategories" style="display: none;">
+                                <table>
+                                    {% for subcategory in category.subcategories.all %}
+                                        <tr class="subcategory">
+                                            <td>{{ subcategory.name }}</td>
+                                            <td><button class="toggle-button">→</button></td>
+                                        </tr>
+                                        <tr class="details" style="display: none;">
+                                            <td colspan="2">{{ subcategory.description }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </section>
+            <script>
+                function filterSubcategories() {
+                    const input = document.getElementById('search');
+                    const filter = input.value.toLowerCase();
+                    const categoryList = document.getElementById('category-list');
+                    const categories = categoryList.getElementsByTagName('li');
+                
+                    for (let i = 0; i < categories.length; i++) {
+                        const subcategories = categories[i].getElementsByClassName('subcategory');
+                        let hasVisibleSubcategory = false;
+                
+                        for (let j = 0; j < subcategories.length; j++) {
+                            const subcategoryName = subcategories[j].getElementsByTagName('td')[0].textContent || subcategories[j].getElementsByTagName('td')[0].innerText;
+                
+                            if (subcategoryName.toLowerCase().indexOf(filter) > -1) {
+                                subcategories[j].style.display = "";
+                                hasVisibleSubcategory = true;
+                            } else {
+                                subcategories[j].style.display = "none";
+                            }
+                        }
+                
+                        // Показать или скрыть подкатегории в зависимости от наличия видимых подкатегорий
+                        categories[i].getElementsByClassName('subcategories')[0].style.display = hasVisibleSubcategory ? "block" : "none";
+                    }
+                }
+                </script>
+                
+            <section class="right-section">
+                <h2>Как пользоваться сервисом:</h2>
+                <p>Для успешной работы с сервисом выполните следующие шаги:</p>
+                <ol>
+                    <li>
+                        Загрузите набор данных: Нажмите кнопку "Загрузить CSV файл" 📁 и выберите файл в формате CSV. Убедитесь, что файл соответствует требованиям сервиса (например, содержит текстовые данные).
+                    </li>
+                    <li>
+                        Дождитесь обработки: После загрузки файла начнется процесс обработки. Прогресс обработки будет отображаться на экране ⏳. Пожалуйста, не закрывайте страницу до завершения процесса.
+                    </li>
+                    <li>
+                        Просмотрите результаты: После завершения обработки вы увидите таблицу с результатами. Вы можете изучить данные прямо на странице или скачать обработанный файл в формате CSV 📥 для дальнейшего использования.
+                    </li>
+                </ol>
+                <h3>Загрузите CSV файл:</h3>
+                <label for="file-upload" class="file-upload-label">
+                    <button id="upload-button">Выберите файл</button>
+                    <span id="file-name">Файл не выбран</span>
+                </label>
+                <input type="file" id="file-upload" style="display: none;" onchange="updateFileName()">
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 Сервис предобработки текстовых сообщений. Разработано студентом Плесской О.В. в рамках преддипломной практики.</p>
+    </footer>
+
+    <script>
+        // Функция для показа/скрытия таблицы по категории
+        document.querySelectorAll('.left-section li').forEach(category => {
+            category.addEventListener('click', function () {
+                const subcategories = this.querySelector('.subcategories'); // Находим таблицу внутри категории
+                if (subcategories.style.display === 'block') {
+                    subcategories.style.display = 'none';
+                } else {
+                    subcategories.style.display = 'block';
+                }
+            });
+        });
+
+        // Функция для показа/скрытия детальной информации в таблице
+        document.querySelectorAll('.toggle-button').forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.stopPropagation(); // Предотвращаем всплытие события клика
+                const detailsRow = this.closest('tr').nextElementSibling; // Находим следующую строку с деталями
+                if (detailsRow.style.display === 'block') {
+                    detailsRow.style.display = 'none';
+                    this.textContent = '→'; // Возвращаем стрелку →
+                } else {
+                    detailsRow.style.display = 'block';
+                    this.textContent = '↓'; // Изменяем на ↓
+                }
+            });
+        });
+
+        // Функция для обновления названия файла
+        function updateFileName() {
+            const fileInput = document.getElementById('file-upload');
+            const fileNameDisplay = document.getElementById('file-name');
+
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = fileInput.files[0].name;
+            } else {
+                fileNameDisplay.textContent = 'Файл не выбран';
+            }
+        }
+    </script>
+</body>
+</html>

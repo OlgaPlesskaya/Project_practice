@@ -107,3 +107,20 @@ class Dataset(models.Model):
         # Проверка, что дата не в будущем
         if self.date > timezone.now().date():
             raise ValidationError('Дата не может быть в будущем')
+
+class Category(models.Model):
+    identifier = models.AutoField(primary_key=True)   # Автоинкрементный идентификатор
+    name = models.CharField(max_length=255, verbose_name="Название категории")
+    emoji = models.CharField(max_length=10, verbose_name="Эмодзи", default='')
+
+    def __str__(self):
+        return self.name
+
+class Subcategory(models.Model):
+    identifier = models.AutoField(primary_key=True)   # Автоинкрементный идентификатор
+    name = models.CharField(max_length=255, verbose_name="Название подкатегории")
+    description = models.TextField(verbose_name="Описание подкатегории")
+    category = models.ForeignKey(Category, related_name='subcategories', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
