@@ -124,3 +124,15 @@ class Subcategory(models.Model):
 
     def __str__(self):
         return self.name
+
+class UploadedFile(models.Model):
+    identifier = models.AutoField(primary_key=True)   # Автоинкрементный идентификатор
+    file = models.FileField(upload_to='uploads/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    processed = models.BooleanField(default=False)
+
+class ProcessedData(models.Model):
+    identifier = models.AutoField(primary_key=True)   # Автоинкрементный идентификатор
+    original_text = models.TextField()
+    category = models.CharField(max_length=255)
+    uploaded_file = models.ForeignKey(UploadedFile, on_delete=models.CASCADE)

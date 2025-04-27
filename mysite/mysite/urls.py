@@ -22,6 +22,7 @@ from polls.models import Dataset,Supplier,Message,CategoryLvl,Author,Publication
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from polls import views
 
 # Serializers define the API representation.
 class DatasetSerializer(serializers.ModelSerializer):
@@ -116,7 +117,11 @@ schema_view = get_schema_view(
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router.urls)),
-    path('home/', include('polls.urls')),
+    path('home/', views.home_view, name='home_view'),
+    #path('home/', views.category_view, name='category_view'),
+    #path('test/', views.upload_file, name='upload_file'),
+    path('progress/', views.get_progress, name='get_progress'),
+    path('download/<str:filename>/', views.download_file, name='download_file'),
     path("admin/", admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
